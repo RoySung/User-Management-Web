@@ -4,7 +4,7 @@ import modifyUsers from '../actions/modifyUsers.js';
 
 function action(parameter) {
   return dispatch => {
-    return fetch('http://jsonplaceholder.typicode.com/users')
+    return fetch('https://jsonplaceholder.typicode.com/users')
       .then(response => response.json())
       .then(json => dispatch(modifyUsers(json)));
   }
