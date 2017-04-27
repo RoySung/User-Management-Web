@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import Checkbox from 'material-ui/Checkbox';
@@ -6,22 +7,35 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import './app.css';
 
-import json from './test';
-
-
 class AppComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.originData = JSON.stringify(json);
+    const { fetchUsers } = props.actions;
+    fetchUsers();
+    const users = props.usersReducer && [];
+    this.originUsers = JSON.stringify(users);
     this.state = {
       selected: [],
       changed: false,
-      users: JSON.parse(this.originData)
+      users
     };
     this.handleOnChange = this.handleOnChange.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.addNewUser = this.addNewUser.bind(this);
     this.removeUser = this.removeUser.bind(this);
+    this.modifyUsersStore = this.modifyUsersStore.bind(this);
+    this.recoveryChanged = this.recoveryChanged.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
+    const users = nextProps.usersReducer;
+    this.originUsers = JSON.stringify(users);
+    this.setState({
+      users,
+      selected: [],
+      changed: false
+    });
   }
 
   handleOnChange(event, value) {
@@ -67,7 +81,7 @@ class AppComponent extends React.Component {
 
     selected.map((value) => {
       if (value) {
-        const index = users.findIndex(x => x.id == value)
+        const index = users.findIndex(x => x.id == value);
         users.splice(index, 1);
       }
     });
@@ -78,17 +92,32 @@ class AppComponent extends React.Component {
     });
   }
 
+  modifyUsersStore() {
+    const { modifyUsers, fetchUsers } = this.props.actions;
+    modifyUsers(this.state.users.slice());
+  }
+
+  recoveryChanged() {
+    console.log(JSON.parse(this.originUsers))
+    this.setState({
+      users: JSON.parse(this.originUsers),
+      selected: [],
+      changed: false
+    });
+  }
+
   isChange() {
-    return JSON.stringify(this.state.users) !== this.originData;
+    return JSON.stringify(this.state.users) !== this.originUsers;
   }
 
   render() {
+    console.log(this.state.users)
     return (
       <div className="index">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHeaderColumn>ID</TableHeaderColumn>
+              {/*<TableHeaderColumn>ID</TableHeaderColumn>*/}
               <TableHeaderColumn>Name</TableHeaderColumn>
               <TableHeaderColumn>UserName</TableHeaderColumn>
               <TableHeaderColumn>Email</TableHeaderColumn>
@@ -100,15 +129,15 @@ class AppComponent extends React.Component {
                 <TableRowColumn style={{width: '24px'}}>
                   <Checkbox id={data.id} name="selected" checked={this.state.selected.indexOf(data.id.toString()) !== -1} onCheck={this.handleSelect}/>
                 </TableRowColumn>
-                <TableRowColumn>{data.id}</TableRowColumn>
+                {/*<TableRowColumn>{data.id}</TableRowColumn>*/}
                 <TableRowColumn>
-                  <TextField id={data.id} name="name" hintText="Name" defaultValue={data.name} onChange={this.handleOnChange}/>
+                  <TextField id={data.id} name="name" hintText="Name" value={data.name} onChange={this.handleOnChange}/>
                 </TableRowColumn>
                 <TableRowColumn>
-                  <TextField id={data.id} name="username" hintText="UserName" defaultValue={data.username} onChange={this.handleOnChange}/>
+                  <TextField id={data.id} name="username" hintText="UserName" value={data.username} onChange={this.handleOnChange}/>
                 </TableRowColumn>
                 <TableRowColumn>
-                  <TextField id={data.id} name="email" hintText="Email" defaultValue={data.email} onChange={this.handleOnChange}/>
+                  <TextField id={data.id} name="email" hintText="Email" value={data.email} onChange={this.handleOnChange}/>
                 </TableRowColumn>
               </TableRow>
             ))}
@@ -120,8 +149,8 @@ class AppComponent extends React.Component {
             <RaisedButton label="New User" primary onTouchTap={this.addNewUser} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
-            <RaisedButton label="Reset" primary disabled={!this.state.changed} />
-            <RaisedButton label="Save" primary disabled={!this.state.changed} />
+            <RaisedButton label="Reset" primary disabled={!this.state.changed} onTouchTap={this.recoveryChanged} />
+            <RaisedButton label="Save" primary disabled={!this.state.changed} onTouchTap={this.modifyUsersStore} />
           </ToolbarGroup>
         </Toolbar>
       </div>
@@ -129,7 +158,10 @@ class AppComponent extends React.Component {
   }
 }
 
-AppComponent.defaultProps = {
+AppComponent.defaultProps = {};
+AppComponent.propTypes = {
+  actions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  usersReducer: PropTypes.object // eslint-disable-line react/forbid-prop-types
 };
 
 export default AppComponent;
