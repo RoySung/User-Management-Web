@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import Checkbox from 'material-ui/Checkbox';
@@ -28,7 +27,6 @@ class AppComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps)
     const users = nextProps.usersReducer;
     this.originUsers = JSON.stringify(users);
     this.setState({
@@ -98,7 +96,6 @@ class AppComponent extends React.Component {
   }
 
   recoveryChanged() {
-    console.log(JSON.parse(this.originUsers))
     this.setState({
       users: JSON.parse(this.originUsers),
       selected: [],
@@ -111,7 +108,6 @@ class AppComponent extends React.Component {
   }
 
   render() {
-    console.log(this.state.users)
     return (
       <div className="index">
         <Table>
@@ -125,19 +121,19 @@ class AppComponent extends React.Component {
           </TableHeader>
           <TableBody showRowHover={false} displayRowCheckbox={false} preScanRows={false} deselectOnClickaway={false}>
             {this.state.users.map(data => (
-              <TableRow selectable={false}>
+              <TableRow key={data.id} selectable={false}>
                 <TableRowColumn style={{width: '24px'}}>
-                  <Checkbox id={data.id} name="selected" checked={this.state.selected.indexOf(data.id.toString()) !== -1} onCheck={this.handleSelect}/>
+                  <Checkbox id={data.id.toString()} name="selected" checked={this.state.selected.indexOf(data.id.toString()) !== -1} onCheck={this.handleSelect}/>
                 </TableRowColumn>
                 {/*<TableRowColumn>{data.id}</TableRowColumn>*/}
                 <TableRowColumn>
-                  <TextField id={data.id} name="name" hintText="Name" value={data.name} onChange={this.handleOnChange}/>
+                  <TextField id={data.id.toString()} name="name" hintText="Name" value={data.name} onChange={this.handleOnChange}/>
                 </TableRowColumn>
                 <TableRowColumn>
-                  <TextField id={data.id} name="username" hintText="UserName" value={data.username} onChange={this.handleOnChange}/>
+                  <TextField id={data.id.toString()} name="username" hintText="UserName" value={data.username} onChange={this.handleOnChange}/>
                 </TableRowColumn>
                 <TableRowColumn>
-                  <TextField id={data.id} name="email" hintText="Email" value={data.email} onChange={this.handleOnChange}/>
+                  <TextField id={data.id.toString()} name="email" hintText="Email" value={data.email} onChange={this.handleOnChange}/>
                 </TableRowColumn>
               </TableRow>
             ))}
@@ -159,9 +155,5 @@ class AppComponent extends React.Component {
 }
 
 AppComponent.defaultProps = {};
-AppComponent.propTypes = {
-  actions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  usersReducer: PropTypes.object // eslint-disable-line react/forbid-prop-types
-};
 
 export default AppComponent;

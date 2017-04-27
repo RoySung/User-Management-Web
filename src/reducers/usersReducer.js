@@ -5,7 +5,7 @@
  */
 import { MODIFY_USERS } from '../actions/const';
 
-const initialState = {};
+const initialState = [];
 
 function reducer(state = initialState, action) {
   /* Keep the reducer clean - do not mutate the original state. */

@@ -4,10 +4,8 @@
  *          This modifications only run once when the generator is invoked - if
  *          you edit them, they are not updated again.
  */
-import React, {
-  Component,
-  PropTypes
-} from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -32,7 +30,7 @@ App.propTypes = {
     fetchUsers: PropTypes.func.isRequired,
     modifyUsers: PropTypes.func.isRequired
   }),
-  usersReducer: PropTypes.shape({})
+  usersReducer: PropTypes.array.isRequired
 };
 function mapStateToProps(state) {
   // eslint-disable-line no-unused-vars
